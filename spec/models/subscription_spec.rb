@@ -1,8 +1,10 @@
-require 'spec_helper'
-require 'yt/models/subscription'
+# frozen_string_literal: true
 
-describe Yt::Subscription do
-  subject(:subscription) { Yt::Subscription.new id: id }
+require 'spec_helper'
+require 'youhub/models/subscription'
+
+describe Youhub::Subscription do
+  subject(:subscription) { Youhub::Subscription.new id: id }
 
   describe '#exists?' do
     context 'given a subscription with an id' do
@@ -24,7 +26,7 @@ describe Yt::Subscription do
       let(:behave) { receive(:do_delete).and_yield }
 
       it { expect(subscription.delete).to be true }
-      it { expect{subscription.delete}.to change{subscription.exists?} }
+      it { expect { subscription.delete }.to change { subscription.exists? } }
     end
   end
 end

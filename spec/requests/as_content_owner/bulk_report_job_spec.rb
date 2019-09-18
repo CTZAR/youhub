@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-require 'yt/models/bulk_report_job'
+require 'youhub/models/bulk_report_job'
 
-describe Yt::BulkReportJob, :partner do
-
+describe Youhub::BulkReportJob, :partner do
   describe '.bulk_reports' do
     describe 'given the bulk report job has bulk reports' do
       let(:job) { $content_owner.bulk_report_jobs.first }

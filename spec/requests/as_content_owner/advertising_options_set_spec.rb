@@ -1,15 +1,17 @@
-require 'spec_helper'
-require 'yt/models/advertising_options_set'
+# frozen_string_literal: true
 
-describe Yt::AdvertisingOptionsSet, :partner do
-  subject(:advertising_options_set) { Yt::AdvertisingOptionsSet.new video_id: video_id, auth: $content_owner }
+require 'spec_helper'
+require 'youhub/models/advertising_options_set'
+
+describe Youhub::AdvertisingOptionsSet, :partner do
+  subject(:advertising_options_set) { Youhub::AdvertisingOptionsSet.new video_id: video_id, auth: $content_owner }
 
   context 'given a video managed by the authenticated Content Owner' do
-    let(:video_id) { ENV['YT_TEST_PARTNER_CLAIMABLE_VIDEO_ID'] }
+    let(:video_id) { ENV['YOUHUB_TEST_PARTNER_CLAIMABLE_VIDEO_ID'] }
 
     describe 'the advertising options can be updated' do
-      let(:params) { {ad_formats: %w(standard_instream long)} }
-      it { expect(advertising_options_set.update params).to be true }
+      let(:params) { { ad_formats: %w[standard_instream long] } }
+      it { expect(advertising_options_set.update(params)).to be true }
     end
   end
 end

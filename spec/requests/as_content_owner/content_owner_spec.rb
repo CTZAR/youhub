@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/models/content_owner'
+# frozen_string_literal: true
 
-describe Yt::ContentOwner, :partner do
+require 'spec_helper'
+require 'youhub/models/content_owner'
+
+describe Youhub::ContentOwner, :partner do
   describe '.partnered_channels' do
     let(:partnered_channels) { $content_owner.partnered_channels }
 
     specify '.first' do
-      expect(partnered_channels.first).to be_a Yt::Channel
+      expect(partnered_channels.first).to be_a Youhub::Channel
     end
 
     specify '.size', :ruby2 do
@@ -18,7 +20,7 @@ describe Yt::ContentOwner, :partner do
     let(:video) { $content_owner.videos.where(order: 'viewCount').first }
 
     specify 'returns the videos in network with the content owner with their tags and category ID' do
-      expect(video).to be_a Yt::Video
+      expect(video).to be_a Youhub::Video
       expect(video.tags).not_to be_empty
       expect(video.category_id).not_to be_nil
     end
@@ -27,7 +29,7 @@ describe Yt::ContentOwner, :partner do
       let(:video) { $content_owner.videos.includes(:snippet).first }
 
       specify 'eager-loads the *full* snippet of each video' do
-        expect(video.instance_variable_defined? :@snippet).to be true
+        expect(video.instance_variable_defined?(:@snippet)).to be true
         expect(video.channel_title).to be
         expect(video.snippet).to be_complete
       end
@@ -37,8 +39,8 @@ describe Yt::ContentOwner, :partner do
       let(:video) { $content_owner.videos.includes(:statistics, :status).first }
 
       specify 'eager-loads the statistics and status of each video' do
-        expect(video.instance_variable_defined? :@statistics_set).to be true
-        expect(video.instance_variable_defined? :@status).to be true
+        expect(video.instance_variable_defined?(:@statistics_set)).to be true
+        expect(video.instance_variable_defined?(:@status)).to be true
       end
     end
 
@@ -46,19 +48,19 @@ describe Yt::ContentOwner, :partner do
       let(:video) { $content_owner.videos.includes(:content_details).first }
 
       specify 'eager-loads the statistics of each video' do
-        expect(video.instance_variable_defined? :@content_detail).to be true
+        expect(video.instance_variable_defined?(:@content_detail)).to be true
       end
     end
 
     describe '.includes(:claim)' do
       let(:videos) { $content_owner.videos.includes(:claim) }
-      let(:video_with_claim) { videos.find{|v| v.claim.present?} }
+      let(:video_with_claim) { videos.find { |v| v.claim.present? } }
 
       specify 'eager-loads the claim of each video and its asset' do
-        expect(video_with_claim.claim).to be_a Yt::Claim
+        expect(video_with_claim.claim).to be_a Youhub::Claim
         expect(video_with_claim.claim.id).to be_a String
         expect(video_with_claim.claim.video_id).to eq video_with_claim.id
-        expect(video_with_claim.claim.asset).to be_a Yt::Asset
+        expect(video_with_claim.claim.asset).to be_a Youhub::Asset
         expect(video_with_claim.claim.asset.id).to be_a String
       end
     end
@@ -68,7 +70,7 @@ describe Yt::ContentOwner, :partner do
     let(:video_group) { $content_owner.video_groups.first }
 
     specify 'returns the first video-group created by the account' do
-      expect(video_group).to be_a Yt::VideoGroup
+      expect(video_group).to be_a Youhub::VideoGroup
       expect(video_group.title).to be_a String
       expect(video_group.item_count).to be_an Integer
       expect(video_group.published_at).to be_a Time
@@ -80,48 +82,46 @@ describe Yt::ContentOwner, :partner do
   end
 
   describe 'claims' do
-    let(:asset_id) { ENV['YT_TEST_PARTNER_ASSET_ID'] }
-    let(:video_id) { ENV['YT_TEST_PARTNER_CLAIMABLE_VIDEO_ID'] }
-    let(:options) { {asset_id: asset_id, video_id: video_id, content_type: 'audiovisual'} }
+    let(:asset_id) { ENV['YOUHUB_TEST_PARTNER_ASSET_ID'] }
+    let(:video_id) { ENV['YOUHUB_TEST_PARTNER_CLAIMABLE_VIDEO_ID'] }
+    let(:options) { { asset_id: asset_id, video_id: video_id, content_type: 'audiovisual' } }
 
     context 'given an existing policy ID' do
-      let(:policy_id) { ENV['YT_TEST_PARTNER_POLICY_ID'] }
+      let(:policy_id) { ENV['YOUHUB_TEST_PARTNER_POLICY_ID'] }
       let(:params) { options.merge policy_id: policy_id }
 
       specify 'can be added' do
-        begin
-          expect($content_owner.create_claim params).to be_a Yt::Claim
-        rescue Yt::Errors::RequestError => e
-          # @note: Every time this test runs, a claim is inserted for the same
-          #   video and asset, but YouTube does not allow this, and responds with
-          #   an error message like "Video is already claimed. Existing claims
-          #   on this video: AbCdEFg1234".
-          #   For the sake of testing, we delete the duplicate and try again.
-          raise unless e.reasons.include? 'alreadyClaimed'
-          id = e.kind['message'].match(/this video: (.*?)$/) {|re| re[1]}
-          Yt::Claim.new(id: id, auth: $content_owner).delete
-          expect($content_owner.create_claim params).to be_a Yt::Claim
-        end
+        expect($content_owner.create_claim(params)).to be_a Youhub::Claim
+      rescue Youhub::Errors::RequestError => e
+        # @note: Every time this test runs, a claim is inserted for the same
+        #   video and asset, but YouTube does not allow this, and responds with
+        #   an error message like "Video is already claimed. Existing claims
+        #   on this video: AbCdEFg1234".
+        #   For the sake of testing, we delete the duplicate and try again.
+        raise unless e.reasons.include? 'alreadyClaimed'
+
+        id = e.kind['message'].match(/this video: (.*?)$/) { |re| re[1] }
+        Youhub::Claim.new(id: id, auth: $content_owner).delete
+        expect($content_owner.create_claim(params)).to be_a Youhub::Claim
       end
     end
 
     context 'given a new policy' do
-      let(:params) { options.merge policy: {rules: [action: :block]} }
+      let(:params) { options.merge policy: { rules: [action: :block] } }
 
       specify 'can be added' do
-        begin
-          expect($content_owner.create_claim params).to be_a Yt::Claim
-        rescue Yt::Errors::RequestError => e
-          # @note: Every time this test runs, a claim is inserted for the same
-          #   video and asset, but YouTube does not allow this, and responds with
-          #   an error message like "Video is already claimed. Existing claims
-          #   on this video: AbCdEFg1234".
-          #   For the sake of testing, we delete the duplicate and try again.
-          raise unless e.reasons.include? 'alreadyClaimed'
-          id = e.kind['message'].match(/this video: (.*?)$/) {|re| re[1]}
-          Yt::Claim.new(id: id, auth: $content_owner).delete
-          expect($content_owner.create_claim params).to be_a Yt::Claim
-        end
+        expect($content_owner.create_claim(params)).to be_a Youhub::Claim
+      rescue Youhub::Errors::RequestError => e
+        # @note: Every time this test runs, a claim is inserted for the same
+        #   video and asset, but YouTube does not allow this, and responds with
+        #   an error message like "Video is already claimed. Existing claims
+        #   on this video: AbCdEFg1234".
+        #   For the sake of testing, we delete the duplicate and try again.
+        raise unless e.reasons.include? 'alreadyClaimed'
+
+        id = e.kind['message'].match(/this video: (.*?)$/) { |re| re[1] }
+        Youhub::Claim.new(id: id, auth: $content_owner).delete
+        expect($content_owner.create_claim(params)).to be_a Youhub::Claim
       end
     end
   end
@@ -145,7 +145,7 @@ describe Yt::ContentOwner, :partner do
       let(:count) { $content_owner.claims.where(id: claim_id).count }
 
       context 'given the ID of a claim administered by the content owner' do
-        let(:claim_id) { ENV['YT_TEST_PARTNER_CLAIM_ID'] }
+        let(:claim_id) { ENV['YOUHUB_TEST_PARTNER_CLAIM_ID'] }
         it { expect(count).to be > 0 }
       end
 
@@ -159,7 +159,7 @@ describe Yt::ContentOwner, :partner do
       let(:count) { $content_owner.claims.where(asset_id: asset_id).count }
 
       context 'given the asset ID of a claim administered by the content owner' do
-        let(:asset_id) { ENV['YT_TEST_PARTNER_ASSET_WITH_CLAIM_ID'] }
+        let(:asset_id) { ENV['YOUHUB_TEST_PARTNER_ASSET_WITH_CLAIM_ID'] }
         it { expect(count).to be > 0 }
       end
 
@@ -173,7 +173,7 @@ describe Yt::ContentOwner, :partner do
       let(:count) { $content_owner.claims.where(video_id: video_id).count }
 
       context 'given the video ID of a claim administered by the content owner' do
-        let(:video_id) { ENV['YT_TEST_PARTNER_VIDEO_ID'] }
+        let(:video_id) { ENV['YOUHUB_TEST_PARTNER_VIDEO_ID'] }
         it { expect(count).to be > 0 }
       end
     end
@@ -182,10 +182,10 @@ describe Yt::ContentOwner, :partner do
       let(:first) { $content_owner.claims.where(params).first }
 
       context 'given a query matching the title of a video of a claim administered by the content owner' do
-        let(:query) { ENV['YT_TEST_PARTNER_Q'] }
+        let(:query) { ENV['YOUHUB_TEST_PARTNER_Q'] }
 
         context 'given no optional filters' do
-          let(:params) { {q: query} }
+          let(:params) { { q: query } }
           it { expect(first).to be }
         end
 
@@ -193,48 +193,47 @@ describe Yt::ContentOwner, :partner do
           let(:remote_date) { '2008-01-01T00:00:00.000Z' }
 
           describe 'applies the filter if the filter name is under_scored' do
-            let(:params) { {q: query, created_before: remote_date} }
+            let(:params) { { q: query, created_before: remote_date } }
             it { expect(first).not_to be }
           end
 
           describe 'applies the filter if the filter name is camelCased' do
-            let(:params) { {q: query, createdBefore: remote_date} }
+            let(:params) { { q: query, createdBefore: remote_date } }
             it { expect(first).not_to be }
           end
         end
       end
 
       context 'given an unknown video ID' do
-        let(:params) { {q: '--not-a-matching-query--'} }
+        let(:params) { { q: '--not-a-matching-query--' } }
         it { expect(first).not_to be }
       end
     end
   end
 
   describe 'references' do
-    let(:claim_id) { ENV['YT_TEST_PARTNER_REFERENCE_CLAIM_ID'] }
-    let(:content_type) { ENV['YT_TEST_PARTNER_REFERENCE_CONTENT_TYPE'] }
-    let(:params) { {claim_id: claim_id, content_type: content_type} }
+    let(:claim_id) { ENV['YOUHUB_TEST_PARTNER_REFERENCE_CLAIM_ID'] }
+    let(:content_type) { ENV['YOUHUB_TEST_PARTNER_REFERENCE_CONTENT_TYPE'] }
+    let(:params) { { claim_id: claim_id, content_type: content_type } }
 
     specify 'can be added' do
-      begin
-        expect($content_owner.create_reference params).to be_a Yt::Reference
-      rescue Yt::Errors::RequestError => e
-        # @note: Every time this test runs, a reference is inserted for the
-        #   same claim, but YouTube does not allow this, and responds with an
-        #   error message like "You attempted to create a reference using the
-        #   content of a previously claimed video, but such a reference already
-        #   exists. The ID of the duplicate reference is xhpACYclOdc."
-        #   For the sake of testing, we delete the duplicate and try again.
-        # @note: Deleting a reference does not work if the reference status is
-        #   "checking" or "pending" and it can take up to 4 minutes for a new
-        #   reference to be checked. The +sleep+ statement takes care of this
-        #   case in the only way allowed by YouTube: sadly waiting.
-        raise unless e.reasons.include? 'referenceAlreadyExists'
-        id = e.kind['message'].match(/reference is (.*?)\.$/) {|re| re[1]}
-        sleep 15 until Yt::Reference.new(id: id, auth: $content_owner).delete
-        expect($content_owner.create_reference params).to be_a Yt::Reference
-      end
+      expect($content_owner.create_reference(params)).to be_a Youhub::Reference
+    rescue Youhub::Errors::RequestError => e
+      # @note: Every time this test runs, a reference is inserted for the
+      #   same claim, but YouTube does not allow this, and responds with an
+      #   error message like "You attempted to create a reference using the
+      #   content of a previously claimed video, but such a reference already
+      #   exists. The ID of the duplicate reference is xhpACYclOdc."
+      #   For the sake of testing, we delete the duplicate and try again.
+      # @note: Deleting a reference does not work if the reference status is
+      #   "checking" or "pending" and it can take up to 4 minutes for a new
+      #   reference to be checked. The +sleep+ statement takes care of this
+      #   case in the only way allowed by YouTube: sadly waiting.
+      raise unless e.reasons.include? 'referenceAlreadyExists'
+
+      id = e.kind['message'].match(/reference is (.*?)\.$/) { |re| re[1] }
+      sleep 15 until Youhub::Reference.new(id: id, auth: $content_owner).delete
+      expect($content_owner.create_reference(params)).to be_a Youhub::Reference
     end
   end
 
@@ -243,7 +242,7 @@ describe Yt::ContentOwner, :partner do
       let(:reference) { $content_owner.references.where(id: reference_id).first }
 
       context 'given the ID of a reference administered by the content owner' do
-        let(:reference_id) { ENV['YT_TEST_PARTNER_REFERENCE_ID'] }
+        let(:reference_id) { ENV['YOUHUB_TEST_PARTNER_REFERENCE_ID'] }
 
         it 'returns valid metadata' do
           expect(reference.id).to be_a String
@@ -275,7 +274,7 @@ describe Yt::ContentOwner, :partner do
         expect(policy.id).to be_a String
         expect(policy.name).to be_a String
         expect(policy.updated_at).to be_a Time
-        expect(rule.action).to  be_a String
+        expect(rule.action).to be_a String
         expect(rule.included_territories).to be_an Array
         expect(rule.excluded_territories).to be_an Array
         expect(rule.match_duration).to be_an Array
@@ -324,6 +323,6 @@ describe Yt::ContentOwner, :partner do
   #   let(:params) { {type: 'web', metadata_mine: {title: "Test Asset Title"}} }
   #   before { @asset = $content_owner.create_asset params }
   #   after { @asset.delete } # This does not seem to work
-  #   it { expect(@asset).to be_a Yt::Asset }
+  #   it { expect(@asset).to be_a Youhub::Asset }
   # end
 end

@@ -1,10 +1,12 @@
-require 'spec_helper'
-require 'yt/errors/server_error'
+# frozen_string_literal: true
 
-describe Yt::Errors::ServerError do
-  let(:msg) { %r{^A request to YouTube API caused an unexpected server error} }
+require 'spec_helper'
+require 'youhub/errors/server_error'
+
+describe Youhub::Errors::ServerError do
+  let(:msg) { /^A request to YouTube API caused an unexpected server error/ }
 
   describe '#exception' do
-    it { expect{raise Yt::Errors::ServerError}.to raise_error msg }
+    it { expect { raise Youhub::Errors::ServerError }.to raise_error msg }
   end
 end

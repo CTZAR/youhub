@@ -1,6 +1,8 @@
-require 'spec_helper'
-require 'yt/models/live_streaming_detail'
+# frozen_string_literal: true
 
-describe Yt::LiveStreamingDetail do
-  subject(:live_streaming_detail) { Yt::LiveStreamingDetail.new data: data }
+require 'spec_helper'
+require 'youhub/models/live_streaming_detail'
+
+describe Youhub::LiveStreamingDetail do
+  subject(:live_streaming_detail) { Youhub::LiveStreamingDetail.new data: data }
 end

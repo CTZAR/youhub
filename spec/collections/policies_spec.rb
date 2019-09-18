@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/collections/policies'
-require 'yt/models/content_owner'
+# frozen_string_literal: true
 
-describe Yt::Collections::Policies do
-  subject(:collection) { Yt::Collections::Policies.new parent: content_owner }
-  let(:content_owner) { Yt::ContentOwner.new owner_name: 'any-name' }
-  let(:page) { {items: [], token: 'any-token'} }
-  let(:query) { {id: 'any-id'} }
+require 'spec_helper'
+require 'youhub/collections/policies'
+require 'youhub/models/content_owner'
+
+describe Youhub::Collections::Policies do
+  subject(:collection) { Youhub::Collections::Policies.new parent: content_owner }
+  let(:content_owner) { Youhub::ContentOwner.new owner_name: 'any-name' }
+  let(:page) { { items: [], token: 'any-token' } }
+  let(:query) { { id: 'any-id' } }
 
   describe '#count' do
     context 'called once with .where(query) and once without' do

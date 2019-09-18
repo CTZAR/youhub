@@ -1,18 +1,20 @@
-require 'spec_helper'
-require 'yt/collections/videos'
-require 'yt/models/channel'
+# frozen_string_literal: true
 
-describe Yt::Collections::Videos do
-  subject(:collection) { Yt::Collections::Videos.new parent: channel }
-  let(:channel) { Yt::Channel.new id: 'any-id' }
-  let(:page) { {items: [], token: 'any-token'} }
+require 'spec_helper'
+require 'youhub/collections/videos'
+require 'youhub/models/channel'
+
+describe Youhub::Collections::Videos do
+  subject(:collection) { Youhub::Collections::Videos.new parent: channel }
+  let(:channel) { Youhub::Channel.new id: 'any-id' }
+  let(:page) { { items: [], token: 'any-token' } }
 
   describe '#size', :ruby2 do
     describe 'sends only one request and return the total results' do
-      let(:total_results) { 123456 }
+      let(:total_results) { 123_456 }
       before do
-        expect_any_instance_of(Yt::Request).to receive(:run).once do
-          double(body: {'pageInfo'=>{'totalResults'=>total_results}})
+        expect_any_instance_of(Youhub::Request).to receive(:run).once do
+          double(body: { 'pageInfo' => { 'totalResults' => total_results } })
         end
       end
       it { expect(collection.size).to be total_results }
@@ -20,7 +22,7 @@ describe Yt::Collections::Videos do
   end
 
   describe '#count' do
-    let(:query) { {q: 'search string'} }
+    let(:query) { { q: 'search string' } }
 
     context 'called once with .where(query) and once without' do
       after do

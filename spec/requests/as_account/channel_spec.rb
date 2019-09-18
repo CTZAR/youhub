@@ -1,9 +1,10 @@
-# encoding: UTF-8
-require 'spec_helper'
-require 'yt/models/channel'
+# frozen_string_literal: true
 
-describe Yt::Channel, :device_app do
-  subject(:channel) { Yt::Channel.new id: id, auth: $account }
+require 'spec_helper'
+require 'youhub/models/channel'
+
+describe Youhub::Channel, :device_app do
+  subject(:channel) { Youhub::Channel.new id: id, auth: $account }
 
   context 'given someone else’s channel' do
     let(:id) { 'UCBR8-60-B28hp2BmDPdntcQ' } # YouTube Spotlight
@@ -25,23 +26,23 @@ describe Yt::Channel, :device_app do
       let(:video) { channel.videos.first }
 
       specify 'returns the videos in the channel without tags or category ID' do
-        expect(video).to be_a Yt::Video
+        expect(video).to be_a Youhub::Video
         expect(video.snippet).not_to be_complete
       end
 
-      describe '.where(id: *anything*)' do
+      describe '.where(id: *anyouhubhing*)' do
         let(:video) { channel.videos.where(id: 'invalid').first }
 
         specify 'is ignored (all the channel’s videos are returned)' do
-          expect(video).to be_a Yt::Video
+          expect(video).to be_a Youhub::Video
         end
       end
 
-      describe '.where(chart: *anything*)' do
+      describe '.where(chart: *anyouhubhing*)' do
         let(:video) { channel.videos.where(chart: 'invalid').first }
 
         specify 'is ignored (all the channel’s videos are returned)' do
-          expect(video).to be_a Yt::Video
+          expect(video).to be_a Youhub::Video
         end
       end
 
@@ -49,8 +50,8 @@ describe Yt::Channel, :device_app do
         let(:video) { channel.videos.includes(:statistics, :status).first }
 
         specify 'eager-loads the statistics and status of each video' do
-          expect(video.instance_variable_defined? :@statistics_set).to be true
-          expect(video.instance_variable_defined? :@status).to be true
+          expect(video.instance_variable_defined?(:@statistics_set)).to be true
+          expect(video.instance_variable_defined?(:@status)).to be true
         end
       end
 
@@ -58,7 +59,7 @@ describe Yt::Channel, :device_app do
         let(:video) { channel.videos.includes(:content_details).first }
 
         specify 'eager-loads the statistics of each video' do
-          expect(video.instance_variable_defined? :@content_detail).to be true
+          expect(video.instance_variable_defined?(:@content_detail)).to be true
         end
       end
 
@@ -66,8 +67,8 @@ describe Yt::Channel, :device_app do
         let(:video) { channel.videos.includes(:category, :status).first }
 
         specify 'eager-loads the category (id and title) of each video' do
-          expect(video.instance_variable_defined? :@snippet).to be true
-          expect(video.instance_variable_defined? :@video_category).to be true
+          expect(video.instance_variable_defined?(:@snippet)).to be true
+          expect(video.instance_variable_defined?(:@video_category)).to be true
         end
       end
 
@@ -88,23 +89,23 @@ describe Yt::Channel, :device_app do
         let(:playlist) { channel.playlists.includes(:content_details).first }
 
         specify 'eager-loads the content details of each playlist' do
-          expect(playlist.instance_variable_defined? :@content_detail).to be true
+          expect(playlist.instance_variable_defined?(:@content_detail)).to be true
         end
       end
     end
 
-    it { expect(channel.playlists.first).to be_a Yt::Playlist }
-    it { expect{channel.delete_playlists}.to raise_error Yt::Errors::RequestError }
+    it { expect(channel.playlists.first).to be_a Youhub::Playlist }
+    it { expect { channel.delete_playlists }.to raise_error Youhub::Errors::RequestError }
 
     describe '.related_playlists' do
       let(:related_playlists) { channel.related_playlists }
 
       specify 'returns the list of associated playlist (Liked Videos, Uploads, ...)' do
-        expect(related_playlists.first).to be_a Yt::Playlist
+        expect(related_playlists.first).to be_a Youhub::Playlist
       end
 
       specify 'includes public related playlists (such as Liked Videos)' do
-        uploads = related_playlists.select{|p| p.title.starts_with? 'Uploads'}
+        uploads = related_playlists.select { |p| p.title.starts_with? 'Uploads' }
         expect(uploads).not_to be_empty
       end
 
@@ -118,12 +119,12 @@ describe Yt::Channel, :device_app do
     end
 
     specify 'with a public list of subscriptions' do
-      expect(channel.subscribed_channels.first).to be_a Yt::Channel
+      expect(channel.subscribed_channels.first).to be_a Youhub::Channel
     end
 
     context 'with a hidden list of subscriptions' do
       let(:id) { 'UCUZHFZ9jIKrLroW8LcyJEQQ' } # YouTube Creators - better make our own one
-      it { expect{channel.subscribed_channels.size}.to raise_error Yt::Errors::Forbidden }
+      it { expect { channel.subscribed_channels.size }.to raise_error Youhub::Errors::Forbidden }
     end
 
     # NOTE: These tests are slow because we *must* wait some seconds between
@@ -135,7 +136,7 @@ describe Yt::Channel, :device_app do
 
       it { expect(channel.subscribed?).to be false }
       it { expect(channel.unsubscribe).to be_falsey }
-      it { expect{channel.unsubscribe!}.to raise_error Yt::Errors::RequestError }
+      it { expect { channel.unsubscribe! }.to raise_error Youhub::Errors::RequestError }
 
       context 'when I subscribe' do
         before { channel.subscribe }
@@ -156,7 +157,7 @@ describe Yt::Channel, :device_app do
       # to a channel you are already subscribed to does not raise an error
       # anymore.
       # it { expect(channel.subscribe).to be_falsey }
-      # it { expect{channel.subscribe!}.to raise_error Yt::Errors::RequestError }
+      # it { expect{channel.subscribe!}.to raise_error Youhub::Errors::RequestError }
 
       context 'when I unsubscribe' do
         before { channel.unsubscribe }
@@ -170,68 +171,68 @@ describe Yt::Channel, :device_app do
 
   context 'given my own channel' do
     let(:id) { $account.channel.id }
-    let(:title) { 'Yt Test <title>' }
-    let(:description) { 'Yt Test <description>' }
-    let(:tags) { ['Yt Test Tag 1', 'Yt Test <Tag> 2'] }
+    let(:title) { 'Youhub Test <title>' }
+    let(:description) { 'Youhub Test <description>' }
+    let(:tags) { ['Youhub Test Tag 1', 'Youhub Test <Tag> 2'] }
     let(:privacy_status) { 'unlisted' }
-    let(:params) { {title: title, description: description, tags: tags, privacy_status: privacy_status} }
+    let(:params) { { title: title, description: description, tags: tags, privacy_status: privacy_status } }
 
     specify 'subscriptions can be listed (hidden or public)' do
       expect(channel.subscriptions.size).to be
     end
 
     describe 'playlists can be deleted' do
-      let(:title) { "Yt Test Delete All Playlists #{rand}" }
+      let(:title) { "Youhub Test Delete All Playlists #{rand}" }
       before { $account.create_playlist params }
 
-      it { expect(channel.delete_playlists title: %r{#{params[:title]}}).to eq [true] }
-      it { expect(channel.delete_playlists params).to eq [true] }
-      it { expect{channel.delete_playlists params}.to change{sleep 1; channel.playlists.count}.by(-1) }
+      it { expect(channel.delete_playlists(title: /#{params[:title]}/)).to eq [true] }
+      it { expect(channel.delete_playlists(params)).to eq [true] }
+      it { expect { channel.delete_playlists params }.to change { sleep 1; channel.playlists.count }.by(-1) }
     end
 
     # Can't subscribe to your own channel.
-    it { expect{channel.subscribe!}.to raise_error Yt::Errors::RequestError }
+    it { expect { channel.subscribe! }.to raise_error Youhub::Errors::RequestError }
     it { expect(channel.subscribe).to be_falsey }
 
     it 'returns valid reports for channel-related metrics' do
       # Some reports are only available to Content Owners.
       # See content owner test for more details about what the methods return.
-      expect{channel.views}.not_to raise_error
-      expect{channel.comments}.not_to raise_error
-      expect{channel.likes}.not_to raise_error
-      expect{channel.dislikes}.not_to raise_error
-      expect{channel.shares}.not_to raise_error
-      expect{channel.subscribers_gained}.not_to raise_error
-      expect{channel.subscribers_lost}.not_to raise_error
-      expect{channel.videos_added_to_playlists}.not_to raise_error
-      expect{channel.videos_removed_from_playlists}.not_to raise_error
-      expect{channel.estimated_minutes_watched}.not_to raise_error
-      expect{channel.average_view_duration}.not_to raise_error
-      expect{channel.average_view_percentage}.not_to raise_error
-      expect{channel.annotation_clicks}.not_to raise_error
-      expect{channel.annotation_click_through_rate}.not_to raise_error
-      expect{channel.annotation_close_rate}.not_to raise_error
-      expect{channel.card_impressions}.not_to raise_error
-      expect{channel.card_clicks}.not_to raise_error
-      expect{channel.card_click_rate}.not_to raise_error
-      expect{channel.card_teaser_impressions}.not_to raise_error
-      expect{channel.card_teaser_clicks}.not_to raise_error
-      expect{channel.card_teaser_click_rate}.not_to raise_error
-      expect{channel.viewer_percentage}.not_to raise_error
-      expect{channel.estimated_revenue}.to raise_error Yt::Errors::Unauthorized
-      expect{channel.ad_impressions}.to raise_error Yt::Errors::Unauthorized
-      expect{channel.monetized_playbacks}.to raise_error Yt::Errors::Unauthorized
-      expect{channel.playback_based_cpm}.to raise_error Yt::Errors::Unauthorized
+      expect { channel.views }.not_to raise_error
+      expect { channel.comments }.not_to raise_error
+      expect { channel.likes }.not_to raise_error
+      expect { channel.dislikes }.not_to raise_error
+      expect { channel.shares }.not_to raise_error
+      expect { channel.subscribers_gained }.not_to raise_error
+      expect { channel.subscribers_lost }.not_to raise_error
+      expect { channel.videos_added_to_playlists }.not_to raise_error
+      expect { channel.videos_removed_from_playlists }.not_to raise_error
+      expect { channel.estimated_minutes_watched }.not_to raise_error
+      expect { channel.average_view_duration }.not_to raise_error
+      expect { channel.average_view_percentage }.not_to raise_error
+      expect { channel.annotation_clicks }.not_to raise_error
+      expect { channel.annotation_click_through_rate }.not_to raise_error
+      expect { channel.annotation_close_rate }.not_to raise_error
+      expect { channel.card_impressions }.not_to raise_error
+      expect { channel.card_clicks }.not_to raise_error
+      expect { channel.card_click_rate }.not_to raise_error
+      expect { channel.card_teaser_impressions }.not_to raise_error
+      expect { channel.card_teaser_clicks }.not_to raise_error
+      expect { channel.card_teaser_click_rate }.not_to raise_error
+      expect { channel.viewer_percentage }.not_to raise_error
+      expect { channel.estimated_revenue }.to raise_error Youhub::Errors::Unauthorized
+      expect { channel.ad_impressions }.to raise_error Youhub::Errors::Unauthorized
+      expect { channel.monetized_playbacks }.to raise_error Youhub::Errors::Unauthorized
+      expect { channel.playback_based_cpm }.to raise_error Youhub::Errors::Unauthorized
     end
   end
 
   context 'given an unknown channel' do
     let(:id) { 'not-a-channel-id' }
 
-    it { expect{channel.snippet}.to raise_error Yt::Errors::NoItems }
-    it { expect{channel.status}.to raise_error Yt::Errors::NoItems }
-    it { expect{channel.statistics_set}.to raise_error Yt::Errors::NoItems }
-    it { expect{channel.subscribe}.to raise_error Yt::Errors::RequestError }
+    it { expect { channel.snippet }.to raise_error Youhub::Errors::NoItems }
+    it { expect { channel.status }.to raise_error Youhub::Errors::NoItems }
+    it { expect { channel.statistics_set }.to raise_error Youhub::Errors::NoItems }
+    it { expect { channel.subscribe }.to raise_error Youhub::Errors::RequestError }
 
     describe 'starting with UC' do
       let(:id) { 'UC-not-a-channel-id' }

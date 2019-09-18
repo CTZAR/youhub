@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/collections/playlists'
+# frozen_string_literal: true
 
-describe Yt::Collections::Playlists do
-  subject(:collection) { Yt::Collections::Playlists.new }
+require 'spec_helper'
+require 'youhub/collections/playlists'
+
+describe Youhub::Collections::Playlists do
+  subject(:collection) { Youhub::Collections::Playlists.new }
   before { expect(collection).to behave }
 
   describe '#insert' do
-    let(:playlist) { Yt::Playlist.new }
+    let(:playlist) { Youhub::Playlist.new }
     # TODO: separate stubs to show options translate into do_insert params
     let(:behave) { receive(:do_insert).and_return playlist }
 

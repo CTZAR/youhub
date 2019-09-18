@@ -1,11 +1,13 @@
-require 'spec_helper'
-require 'yt/models/comment'
+# frozen_string_literal: true
 
-describe Yt::Comment, :server_app do
-  subject(:comment) { Yt::Comment.new attrs }
+require 'spec_helper'
+require 'youhub/models/comment'
+
+describe Youhub::Comment, :server_app do
+  subject(:comment) { Youhub::Comment.new attrs }
 
   context 'given an existing comment (non-reply) ID' do
-    let(:attrs) { {id: 'z13kc1bxpp22hzaxr04cd1kreurbjja41q00k'} }
+    let(:attrs) { { id: 'z13kc1bxpp22hzaxr04cd1kreurbjja41q00k' } }
 
     it { expect(comment.parent_id).to be_nil }
     it { expect(comment.text_display).to be_a String }
@@ -15,7 +17,7 @@ describe Yt::Comment, :server_app do
   end
 
   context 'given an existing comment (reply) ID' do
-    let(:attrs) { {id: 'z13kc1bxpp22hzaxr04cd1kreurbjja41q00k.1458679991141996'} }
+    let(:attrs) { { id: 'z13kc1bxpp22hzaxr04cd1kreurbjja41q00k.1458679991141996' } }
 
     it { expect(comment.parent_id).to be_a String }
   end

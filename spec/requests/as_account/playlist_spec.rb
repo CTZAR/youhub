@@ -1,10 +1,10 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 require 'spec_helper'
-require 'yt/models/playlist'
+require 'youhub/models/playlist'
 
-describe Yt::Playlist, :device_app do
-  subject(:playlist) { Yt::Playlist.new id: id, auth: $account }
+describe Youhub::Playlist, :device_app do
+  subject(:playlist) { Youhub::Playlist.new id: id, auth: $account }
 
   context 'given an existing playlist' do
     let(:id) { 'PLbsGxdAPhjv_bsJtQzUgD0SA-AReDCynL' } # from YouTube Creators
@@ -25,15 +25,15 @@ describe Yt::Playlist, :device_app do
       let(:item) { playlist.playlist_items.first }
 
       specify 'returns the playlist item with the complete snippet' do
-        expect(item).to be_a Yt::PlaylistItem
+        expect(item).to be_a Youhub::PlaylistItem
         expect(item.snippet).to be_complete
         expect(item.position).not_to be_nil
       end
 
       specify 'does not eager-load the attributes of the item’s video' do
-        expect(item.video.instance_variable_defined? :@snippet).to be false
-        expect(item.video.instance_variable_defined? :@status).to be false
-        expect(item.video.instance_variable_defined? :@statistics_set).to be false
+        expect(item.video.instance_variable_defined?(:@snippet)).to be false
+        expect(item.video.instance_variable_defined?(:@status)).to be false
+        expect(item.video.instance_variable_defined?(:@statistics_set)).to be false
       end
     end
 
@@ -41,9 +41,9 @@ describe Yt::Playlist, :device_app do
       let(:item) { playlist.playlist_items.includes(:video).first }
 
       specify 'eager-loads the snippet, status and statistics of each video' do
-        expect(item.video.instance_variable_defined? :@snippet).to be true
-        expect(item.video.instance_variable_defined? :@status).to be true
-        expect(item.video.instance_variable_defined? :@statistics_set).to be true
+        expect(item.video.instance_variable_defined?(:@snippet)).to be true
+        expect(item.video.instance_variable_defined?(:@status)).to be true
+        expect(item.video.instance_variable_defined?(:@statistics_set)).to be true
       end
     end
   end
@@ -51,29 +51,29 @@ describe Yt::Playlist, :device_app do
   context 'given an unknown playlist' do
     let(:id) { 'not-a-playlist-id' }
 
-    it { expect{playlist.snippet}.to raise_error Yt::Errors::NoItems }
-    it { expect{playlist.status}.to raise_error Yt::Errors::NoItems }
+    it { expect { playlist.snippet }.to raise_error Youhub::Errors::NoItems }
+    it { expect { playlist.status }.to raise_error Youhub::Errors::NoItems }
   end
 
   context 'given someone else’s playlist' do
     let(:id) { 'PLbsGxdAPhjv_bsJtQzUgD0SA-AReDCynL' } # from YouTube Creators
     let(:video_id) { '9bZkp7q19f0' }
 
-    it { expect{playlist.delete}.to fail.with 'playlistForbidden' }
-    it { expect{playlist.update}.to fail.with 'playlistForbidden' }
-    it { expect{playlist.add_video! video_id}.to raise_error Yt::Errors::RequestError }
-    it { expect{playlist.delete_playlist_items}.to raise_error Yt::Errors::RequestError }
+    it { expect { playlist.delete }.to raise.with 'playlistForbidden' }
+    it { expect { playlist.update }.to raise.with 'playlistForbidden' }
+    it { expect { playlist.add_video! video_id }.to raise_error Youhub::Errors::RequestError }
+    it { expect { playlist.delete_playlist_items }.to raise_error Youhub::Errors::RequestError }
   end
 
   context 'given one of my own playlists that I want to delete' do
-    before(:all) { @my_playlist = $account.create_playlist title: "Yt Test Delete Playlist #{rand}" }
+    before(:all) { @my_playlist = $account.create_playlist title: "Youhub Test Delete Playlist #{rand}" }
     let(:id) { @my_playlist.id }
 
     it { expect(playlist.delete).to be true }
   end
 
   context 'given one of my own playlists that I want to update' do
-    before(:all) { @my_playlist = $account.create_playlist title: "Yt Test Update Playlist #{rand}" }
+    before(:all) { @my_playlist = $account.create_playlist title: "Youhub Test Update Playlist #{rand}" }
     after(:all) { @my_playlist.delete }
     let(:id) { @my_playlist.id }
     let!(:old_title) { @my_playlist.title }
@@ -83,7 +83,7 @@ describe Yt::Playlist, :device_app do
     context 'given I update the title' do
       # NOTE: The use of UTF-8 characters is to test that we can pass up to
       # 50 characters, independently of their representation
-      let(:attrs) { {title: "Yt Example Update Playlist #{rand} - ®•♡❥❦❧☙"} }
+      let(:attrs) { { title: "Youhub Example Update Playlist #{rand} - ®•♡❥❦❧☙" } }
 
       specify 'only updates the title' do
         expect(update).to be true
@@ -94,7 +94,7 @@ describe Yt::Playlist, :device_app do
 
     context 'given I update the description' do
       let!(:old_description) { @my_playlist.description }
-      let(:attrs) { {description: "Yt Example Description  #{rand} - ®•♡❥❦❧☙"} }
+      let(:attrs) { { description: "Youhub Example Description  #{rand} - ®•♡❥❦❧☙" } }
 
       specify 'only updates the description' do
         expect(update).to be true
@@ -106,7 +106,7 @@ describe Yt::Playlist, :device_app do
 
     context 'given I update the tags' do
       let!(:old_tags) { @my_playlist.tags }
-      let(:attrs) { {tags: ["Yt Test Tag #{rand}"]} }
+      let(:attrs) { { tags: ["Youhub Test Tag #{rand}"] } }
 
       specify 'only updates the tag' do
         expect(update).to be true
@@ -117,11 +117,11 @@ describe Yt::Playlist, :device_app do
     end
 
     context 'given I update title, description and/or tags using angle brackets' do
-      let(:attrs) { {title: "Yt Test < >", description: '< >', tags: ['<tag>']} }
+      let(:attrs) { { title: 'Youhub Test < >', description: '< >', tags: ['<tag>'] } }
 
       specify 'updates them replacing angle brackets with similar unicode characters accepted by YouTube' do
         expect(update).to be true
-        expect(playlist.title).to eq 'Yt Test ‹ ›'
+        expect(playlist.title).to eq 'Youhub Test ‹ ›'
         expect(playlist.description).to eq '‹ ›'
         expect(playlist.tags).to eq ['‹tag›']
       end
@@ -131,7 +131,7 @@ describe Yt::Playlist, :device_app do
       let!(:new_privacy_status) { old_privacy_status == 'private' ? 'unlisted' : 'private' }
 
       context 'passing the parameter in underscore syntax' do
-        let(:attrs) { {privacy_status: new_privacy_status} }
+        let(:attrs) { { privacy_status: new_privacy_status } }
 
         specify 'only updates the privacy status' do
           expect(update).to be true
@@ -141,7 +141,7 @@ describe Yt::Playlist, :device_app do
       end
 
       context 'passing the parameter in camel-case syntax' do
-        let(:attrs) { {privacyStatus: new_privacy_status} }
+        let(:attrs) { { privacyStatus: new_privacy_status } }
 
         specify 'only updates the privacy status' do
           expect(update).to be true
@@ -155,10 +155,10 @@ describe Yt::Playlist, :device_app do
       let(:video_id) { '9bZkp7q19f0' } # Gangnam Style
 
       describe 'can be added' do
-        it { expect(playlist.add_video video_id).to be_a Yt::PlaylistItem }
-        it { expect{playlist.add_video video_id}.to change{playlist.playlist_items.count}.by(1) }
-        it { expect(playlist.add_video! video_id).to be_a Yt::PlaylistItem }
-        it { expect{playlist.add_video! video_id}.to change{playlist.playlist_items.count}.by(1) }
+        it { expect(playlist.add_video(video_id)).to be_a Youhub::PlaylistItem }
+        it { expect { playlist.add_video video_id }.to change { playlist.playlist_items.count }.by(1) }
+        it { expect(playlist.add_video!(video_id)).to be_a Youhub::PlaylistItem }
+        it { expect { playlist.add_video! video_id }.to change { playlist.playlist_items.count }.by(1) }
         it { expect(playlist.add_video(video_id, position: 0).position).to be 0 }
       end
 
@@ -180,7 +180,7 @@ describe Yt::Playlist, :device_app do
         before { playlist.add_video video_id }
 
         it { expect(playlist.delete_playlist_items.uniq).to eq [true] }
-        it { expect{playlist.delete_playlist_items}.to change{playlist.playlist_items.count} }
+        it { expect { playlist.delete_playlist_items }.to change { playlist.playlist_items.count } }
       end
     end
 
@@ -188,9 +188,9 @@ describe Yt::Playlist, :device_app do
       let(:video_id) { 'not-a-video' }
 
       describe 'cannot be added' do
-        it { expect(playlist.add_video video_id).to be_nil }
-        it { expect{playlist.add_video video_id}.not_to change{playlist.playlist_items.count} }
-        it { expect{playlist.add_video! video_id}.to fail.with 'videoNotFound' }
+        it { expect(playlist.add_video(video_id)).to be_nil }
+        it { expect { playlist.add_video video_id }.not_to change { playlist.playlist_items.count } }
+        it { expect { playlist.add_video! video_id }.to raise.with 'videoNotFound' }
       end
     end
 
@@ -199,8 +199,8 @@ describe Yt::Playlist, :device_app do
 
       describe 'only one can be added' do
         it { expect(playlist.add_videos(video_ids).length).to eq 2 }
-        it { expect{playlist.add_videos video_ids}.to change{playlist.playlist_items.count}.by(1) }
-        it { expect{playlist.add_videos! video_ids}.to fail.with 'videoNotFound' }
+        it { expect { playlist.add_videos video_ids }.to change { playlist.playlist_items.count }.by(1) }
+        it { expect { playlist.add_videos! video_ids }.to raise.with 'videoNotFound' }
       end
     end
   end
@@ -209,10 +209,10 @@ describe Yt::Playlist, :device_app do
     let(:id) { $account.channel.playlists.first.id }
 
     it 'returns valid reports for playlist-related metrics' do
-      expect{playlist.views}.not_to raise_error
-      expect{playlist.playlist_starts}.not_to raise_error
-      expect{playlist.average_time_in_playlist}.not_to raise_error
-      expect{playlist.views_per_playlist_start}.not_to raise_error
+      expect { playlist.views }.not_to raise_error
+      expect { playlist.playlist_starts }.not_to raise_error
+      expect { playlist.average_time_in_playlist }.not_to raise_error
+      expect { playlist.views_per_playlist_start }.not_to raise_error
     end
   end
 end

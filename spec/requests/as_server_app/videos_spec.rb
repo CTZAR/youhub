@@ -1,9 +1,10 @@
-# encoding: UTF-8
-require 'spec_helper'
-require 'yt/collections/videos'
+# frozen_string_literal: true
 
-describe Yt::Collections::Videos, :server_app do
-  subject(:videos) { Yt::Collections::Videos.new }
+require 'spec_helper'
+require 'youhub/collections/videos'
+
+describe Youhub::Collections::Videos, :server_app do
+  subject(:videos) { Youhub::Collections::Videos.new }
 
   specify 'without :where conditions, returns all YouTube videos', :ruby2 do
     expect(videos.size).to be > 100_000
@@ -31,10 +32,10 @@ describe Yt::Collections::Videos, :server_app do
     let(:video) { videos.where(id: '9bZkp7q19f0', part: part).first }
 
     specify 'load ONLY the specified parts of the videos' do
-      expect(video.instance_variable_defined? :@snippet).to be false
-      expect(video.instance_variable_defined? :@status).to be false
-      expect(video.instance_variable_defined? :@statistics_set).to be true
-      expect(video.instance_variable_defined? :@content_detail).to be true
+      expect(video.instance_variable_defined?(:@snippet)).to be false
+      expect(video.instance_variable_defined?(:@status)).to be false
+      expect(video.instance_variable_defined?(:@statistics_set)).to be true
+      expect(video.instance_variable_defined?(:@content_detail)).to be true
     end
   end
 end

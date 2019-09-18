@@ -1,6 +1,8 @@
-require 'spec_helper'
-require 'yt/models/content_owner_detail'
+# frozen_string_literal: true
 
-describe Yt::ContentOwnerDetail do
-  subject(:content_owner_detail) { Yt::ContentOwnerDetail.new data: data }
+require 'spec_helper'
+require 'youhub/models/content_owner_detail'
+
+describe Youhub::ContentOwnerDetail do
+  subject(:content_owner_detail) { Youhub::ContentOwnerDetail.new data: data }
 end

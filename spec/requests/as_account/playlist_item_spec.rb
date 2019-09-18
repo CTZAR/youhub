@@ -1,8 +1,10 @@
-require 'spec_helper'
-require 'yt/models/playlist_item'
+# frozen_string_literal: true
 
-describe Yt::PlaylistItem, :device_app do
-  subject(:item) { Yt::PlaylistItem.new id: id, auth: $account }
+require 'spec_helper'
+require 'youhub/models/playlist_item'
+
+describe Youhub::PlaylistItem, :device_app do
+  subject(:item) { Youhub::PlaylistItem.new id: id, auth: $account }
 
   context 'given an existing playlist item' do
     let(:id) { 'UExJQk5UR3NjRS1jalEwSllxWmoweElIX0RjaGRUT0tRSS41NkI0NEY2RDEwNTU3Q0M2' } # from my channel
@@ -17,7 +19,7 @@ describe Yt::PlaylistItem, :device_app do
       expect(item.playlist_id).to be_a String
       expect(item.position).to be_an Integer
       expect(item.video_id).to be_a String
-      expect(item.video).to be_a Yt::Video
+      expect(item.video).to be_a Youhub::Video
       expect(item.privacy_status).to be_a String
     end
   end
@@ -25,12 +27,12 @@ describe Yt::PlaylistItem, :device_app do
   context 'given an unknown playlist item' do
     let(:id) { 'not-a-playlist-item-id' }
 
-    it { expect{item.snippet}.to raise_error Yt::Errors::RequestError }
+    it { expect { item.snippet }.to raise_error Youhub::Errors::RequestError }
   end
 
   context 'given one of my own playlist items that I want to update' do
     before(:all) do
-      @my_playlist = $account.create_playlist title: "Yt Test Update Playlist Item #{rand}"
+      @my_playlist = $account.create_playlist title: "Youhub Test Update Playlist Item #{rand}"
       @my_playlist.add_video '9bZkp7q19f0'
       @my_playlist_item = @my_playlist.add_video '9bZkp7q19f0'
     end
@@ -42,7 +44,7 @@ describe Yt::PlaylistItem, :device_app do
     let(:update) { @my_playlist_item.update attrs }
 
     context 'given I update the position' do
-      let(:attrs) { {position: 0} }
+      let(:attrs) { { position: 0 } }
 
       specify 'only updates the position' do
         expect(update).to be true

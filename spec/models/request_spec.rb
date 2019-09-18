@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-require 'yt/request'
+require 'youhub/request'
 
-
-describe Yt::Request do
-  subject(:request) { Yt::Request.new host: 'example.com' }
+describe Youhub::Request do
+  subject(:request) { Youhub::Request.new host: 'example.com' }
   let(:response) { response_class.new nil, nil, nil }
-  let(:response_body) { }
+  let(:response_body) {}
 
   describe '#run' do
     context 'given a request that returns' do
@@ -15,7 +16,7 @@ describe Yt::Request do
       context 'a success code 2XX' do
         let(:response_class) { Net::HTTPOK }
 
-        it { expect{request.run}.not_to fail }
+        it { expect { request.run }.not_to raise }
       end
 
       context 'an error code 5XX' do
@@ -27,13 +28,13 @@ describe Yt::Request do
         context 'every time' do
           let(:retry_response_class) { Net::HTTPServerError }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but returns a success code 2XX the second time' do
           let(:retry_response_class) { Net::HTTPOK }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -47,26 +48,26 @@ describe Yt::Request do
         context 'every time' do
           let(:retry_response_class) { Net::HTTPForbidden }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but returns a success code 2XX the second time' do
           let(:retry_response_class) { Net::HTTPOK }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
       context 'an error code 401' do
         let(:response_class) { Net::HTTPUnauthorized }
 
-        it { expect{request.run}.to fail }
+        it { expect { request.run }.to raise }
       end
 
       context 'any other non-2XX error code' do
         let(:response_class) { Net::HTTPNotFound }
 
-        it { expect{request.run}.to fail }
+        it { expect { request.run }.to raise }
       end
     end
 
@@ -83,7 +84,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -91,7 +92,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -104,7 +105,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -112,7 +113,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -125,7 +126,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -133,7 +134,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -146,7 +147,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -154,7 +155,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -167,7 +168,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -175,7 +176,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
 
@@ -188,7 +189,7 @@ describe Yt::Request do
         context 'every time' do
           before { expect(Net::HTTP).to receive(:start).at_least(:once).and_raise http_error }
 
-          it { expect{request.run}.to fail }
+          it { expect { request.run }.to raise }
         end
 
         context 'but works the second time' do
@@ -196,7 +197,7 @@ describe Yt::Request do
           before { allow(retry_response).to receive(:body) }
           let(:retry_response) { Net::HTTPOK.new nil, nil, nil }
 
-          it { expect{request.run}.not_to fail }
+          it { expect { request.run }.not_to raise }
         end
       end
     end

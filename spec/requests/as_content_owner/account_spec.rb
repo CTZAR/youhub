@@ -1,9 +1,10 @@
-# encoding: UTF-8
-require 'spec_helper'
-require 'yt/models/account'
+# frozen_string_literal: true
 
-describe Yt::Account, :partner do
-  subject(:account) { Yt::Account.new id: id, authentication: $content_owner.authentication }
+require 'spec_helper'
+require 'youhub/models/account'
+
+describe Youhub::Account, :partner do
+  subject(:account) { Youhub::Account.new id: id, authentication: $content_owner.authentication }
 
   describe '.content_owners' do
     let(:content_owners) { account.content_owners }
@@ -13,7 +14,7 @@ describe Yt::Account, :partner do
 
       specify 'returns the associated content owners' do
         expect(content_owners.size).to be > 0
-        expect(content_owners.first).to be_a Yt::ContentOwner
+        expect(content_owners.first).to be_a Youhub::ContentOwner
       end
 
       specify 'includes the display name for each content owner' do

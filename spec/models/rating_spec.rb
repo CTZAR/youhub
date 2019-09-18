@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/models/rating'
+# frozen_string_literal: true
 
-describe Yt::Rating do
-  subject(:rating) { Yt::Rating.new }
+require 'spec_helper'
+require 'youhub/models/rating'
+
+describe Youhub::Rating do
+  subject(:rating) { Youhub::Rating.new }
 
   describe '#update' do
     before { expect(rating).to receive(:do_update).and_yield }
 
-    it { expect{rating.set :like}.to change{rating.rating} }
+    it { expect { rating.set :like }.to change { rating.rating } }
   end
 end

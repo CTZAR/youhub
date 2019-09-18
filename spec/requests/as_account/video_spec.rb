@@ -1,15 +1,15 @@
-# encoding: UTF-8
+# frozen_string_literal: true
 
 require 'spec_helper'
-require 'yt/models/video'
+require 'youhub/models/video'
 
-describe Yt::Video, :device_app do
-  subject(:video) { Yt::Video.new id: id, auth: $account }
+describe Youhub::Video, :device_app do
+  subject(:video) { Youhub::Video.new id: id, auth: $account }
 
   context 'given someone else’s video' do
     let(:id) { '9bZkp7q19f0' }
 
-    it { expect(video.content_detail).to be_a Yt::ContentDetail }
+    it { expect(video.content_detail).to be_a Youhub::ContentDetail }
 
     it 'returns valid metadata' do
       expect(video.title).to be_a String
@@ -69,8 +69,8 @@ describe Yt::Video, :device_app do
       expect(video.category_title).to be_a String
     end
 
-    it { expect{video.update}.to fail }
-    it { expect{video.delete}.to fail.with 'forbidden' }
+    it { expect { video.update }.to raise }
+    it { expect { video.delete }.to raise.with 'forbidden' }
 
     context 'that I like' do
       before { video.like }
@@ -117,16 +117,16 @@ describe Yt::Video, :device_app do
   context 'given an unknown video' do
     let(:id) { 'not-a-video-id' }
 
-    it { expect{video.content_detail}.to raise_error Yt::Errors::NoItems }
-    it { expect{video.snippet}.to raise_error Yt::Errors::NoItems }
-    it { expect{video.rating}.to raise_error Yt::Errors::NoItems }
-    it { expect{video.status}.to raise_error Yt::Errors::NoItems }
-    it { expect{video.statistics_set}.to raise_error Yt::Errors::NoItems }
-    it { expect{video.file_detail}.to raise_error Yt::Errors::NoItems }
+    it { expect { video.content_detail }.to raise_error Youhub::Errors::NoItems }
+    it { expect { video.snippet }.to raise_error Youhub::Errors::NoItems }
+    it { expect { video.rating }.to raise_error Youhub::Errors::NoItems }
+    it { expect { video.status }.to raise_error Youhub::Errors::NoItems }
+    it { expect { video.statistics_set }.to raise_error Youhub::Errors::NoItems }
+    it { expect { video.file_detail }.to raise_error Youhub::Errors::NoItems }
   end
 
   context 'given one of my own videos that I want to delete' do
-    before(:all) { @tmp_video = $account.upload_video 'https://bit.ly/yt_test', title: "Yt Test Delete Video #{rand}" }
+    before(:all) { @tmp_video = $account.upload_video 'https://bit.ly/youhub_test', title: "Youhub Test Delete Video #{rand}" }
     let(:id) { @tmp_video.id }
 
     it { expect(video.delete).to be true }
@@ -141,7 +141,7 @@ describe Yt::Video, :device_app do
     context 'given I update the title' do
       # NOTE: The use of UTF-8 characters is to test that we can pass up to
       # 50 characters, independently of their representation
-      let(:attrs) { {title: "Yt Example Update Video #{rand} - ®•♡❥❦❧☙"} }
+      let(:attrs) { { title: "Youhub Example Update Video #{rand} - ®•♡❥❦❧☙" } }
 
       specify 'only updates the title' do
         expect(update).to be true
@@ -152,7 +152,7 @@ describe Yt::Video, :device_app do
 
     context 'given I update the description' do
       let!(:old_description) { video.description }
-      let(:attrs) { {description: "Yt Example Description  #{rand} - ®•♡❥❦❧☙"} }
+      let(:attrs) { { description: "Youhub Example Description  #{rand} - ®•♡❥❦❧☙" } }
 
       specify 'only updates the description' do
         expect(update).to be true
@@ -164,7 +164,7 @@ describe Yt::Video, :device_app do
 
     context 'given I update the tags' do
       let!(:old_tags) { video.tags }
-      let(:attrs) { {tags: ["Yt Test Tag #{rand}"]} }
+      let(:attrs) { { tags: ["Youhub Test Tag #{rand}"] } }
 
       specify 'only updates the tag' do
         expect(update).to be true
@@ -179,7 +179,7 @@ describe Yt::Video, :device_app do
       let!(:new_category_id) { old_category_id == '22' ? '23' : '22' }
 
       context 'passing the parameter in underscore syntax' do
-        let(:attrs) { {category_id: new_category_id} }
+        let(:attrs) { { category_id: new_category_id } }
 
         specify 'only updates the category ID' do
           expect(update).to be true
@@ -190,7 +190,7 @@ describe Yt::Video, :device_app do
       end
 
       context 'passing the parameter in camel-case syntax' do
-        let(:attrs) { {categoryId: new_category_id} }
+        let(:attrs) { { categoryId: new_category_id } }
 
         specify 'only updates the category ID' do
           expect(update).to be true
@@ -200,11 +200,11 @@ describe Yt::Video, :device_app do
     end
 
     context 'given I update title, description and/or tags using angle brackets' do
-      let(:attrs) { {title: "Example Yt Test < >", description: '< >', tags: ['<tag>']} }
+      let(:attrs) { { title: 'Example Youhub Test < >', description: '< >', tags: ['<tag>'] } }
 
       specify 'updates them replacing angle brackets with similar unicode characters accepted by YouTube' do
         expect(update).to be true
-        expect(video.title).to eq 'Example Yt Test ‹ ›'
+        expect(video.title).to eq 'Example Youhub Test ‹ ›'
         expect(video.description).to eq '‹ ›'
         expect(video.tags).to eq ['‹tag›']
       end
@@ -216,7 +216,7 @@ describe Yt::Video, :device_app do
       let!(:new_privacy_status) { old_privacy_status == 'private' ? 'unlisted' : 'private' }
 
       context 'passing the parameter in underscore syntax' do
-        let(:attrs) { {privacy_status: new_privacy_status} }
+        let(:attrs) { { privacy_status: new_privacy_status } }
 
         specify 'only updates the privacy status' do
           expect(update).to be true
@@ -226,7 +226,7 @@ describe Yt::Video, :device_app do
       end
 
       context 'passing the parameter in camel-case syntax' do
-        let(:attrs) { {privacyStatus: new_privacy_status} }
+        let(:attrs) { { privacyStatus: new_privacy_status } }
 
         specify 'only updates the privacy status' do
           expect(update).to be true
@@ -240,7 +240,7 @@ describe Yt::Video, :device_app do
       let!(:old_embeddable) { video.embeddable? }
       let!(:new_embeddable) { !old_embeddable }
 
-      let(:attrs) { {embeddable: new_embeddable} }
+      let(:attrs) { { embeddable: new_embeddable } }
 
       # @see https://developers.google.com/youtube/v3/docs/videos/update
       specify 'does update the embeddable status' do
@@ -254,7 +254,7 @@ describe Yt::Video, :device_app do
       let!(:new_public_stats_viewable) { !old_public_stats_viewable }
 
       context 'passing the parameter in underscore syntax' do
-        let(:attrs) { {public_stats_viewable: new_public_stats_viewable} }
+        let(:attrs) { { public_stats_viewable: new_public_stats_viewable } }
 
         specify 'only updates the public stats viewable setting' do
           expect(update).to be true
@@ -265,7 +265,7 @@ describe Yt::Video, :device_app do
       end
 
       context 'passing the parameter in camel-case syntax' do
-        let(:attrs) { {publicStatsViewable: new_public_stats_viewable} }
+        let(:attrs) { { publicStatsViewable: new_public_stats_viewable } }
 
         specify 'only updates the public stats viewable setting' do
           expect(update).to be true
@@ -279,33 +279,33 @@ describe Yt::Video, :device_app do
     it 'returns valid reports for video-related metrics' do
       # Some reports are only available to Content Owners.
       # See content owner test for more details about what the methods return.
-      expect{video.views}.not_to raise_error
-      expect{video.comments}.not_to raise_error
-      expect{video.likes}.not_to raise_error
-      expect{video.dislikes}.not_to raise_error
-      expect{video.shares}.not_to raise_error
-      expect{video.subscribers_gained}.not_to raise_error
-      expect{video.subscribers_lost}.not_to raise_error
-      expect{video.videos_added_to_playlists}.not_to raise_error
-      expect{video.videos_removed_from_playlists}.not_to raise_error
-      expect{video.estimated_minutes_watched}.not_to raise_error
-      expect{video.average_view_duration}.not_to raise_error
-      expect{video.average_view_percentage}.not_to raise_error
-      expect{video.annotation_clicks}.not_to raise_error
-      expect{video.annotation_click_through_rate}.not_to raise_error
-      expect{video.annotation_close_rate}.not_to raise_error
-      expect{video.card_impressions}.not_to raise_error
-      expect{video.card_clicks}.not_to raise_error
-      expect{video.card_click_rate}.not_to raise_error
-      expect{video.card_teaser_impressions}.not_to raise_error
-      expect{video.card_teaser_clicks}.not_to raise_error
-      expect{video.card_teaser_click_rate}.not_to raise_error
-      expect{video.viewer_percentage}.not_to raise_error
-      expect{video.estimated_revenue}.to raise_error Yt::Errors::Unauthorized
-      expect{video.ad_impressions}.to raise_error Yt::Errors::Unauthorized
-      expect{video.monetized_playbacks}.to raise_error Yt::Errors::Unauthorized
-      expect{video.playback_based_cpm}.to raise_error Yt::Errors::Unauthorized
-      expect{video.advertising_options_set}.to raise_error Yt::Errors::Forbidden
+      expect { video.views }.not_to raise_error
+      expect { video.comments }.not_to raise_error
+      expect { video.likes }.not_to raise_error
+      expect { video.dislikes }.not_to raise_error
+      expect { video.shares }.not_to raise_error
+      expect { video.subscribers_gained }.not_to raise_error
+      expect { video.subscribers_lost }.not_to raise_error
+      expect { video.videos_added_to_playlists }.not_to raise_error
+      expect { video.videos_removed_from_playlists }.not_to raise_error
+      expect { video.estimated_minutes_watched }.not_to raise_error
+      expect { video.average_view_duration }.not_to raise_error
+      expect { video.average_view_percentage }.not_to raise_error
+      expect { video.annotation_clicks }.not_to raise_error
+      expect { video.annotation_click_through_rate }.not_to raise_error
+      expect { video.annotation_close_rate }.not_to raise_error
+      expect { video.card_impressions }.not_to raise_error
+      expect { video.card_clicks }.not_to raise_error
+      expect { video.card_click_rate }.not_to raise_error
+      expect { video.card_teaser_impressions }.not_to raise_error
+      expect { video.card_teaser_clicks }.not_to raise_error
+      expect { video.card_teaser_click_rate }.not_to raise_error
+      expect { video.viewer_percentage }.not_to raise_error
+      expect { video.estimated_revenue }.to raise_error Youhub::Errors::Unauthorized
+      expect { video.ad_impressions }.to raise_error Youhub::Errors::Unauthorized
+      expect { video.monetized_playbacks }.to raise_error Youhub::Errors::Unauthorized
+      expect { video.playback_based_cpm }.to raise_error Youhub::Errors::Unauthorized
+      expect { video.advertising_options_set }.to raise_error Youhub::Errors::Forbidden
     end
   end
 
@@ -316,43 +316,43 @@ describe Yt::Video, :device_app do
   #   Therefore, just to test the updating of publishAt, we use a brand new
   #   video (set to private), rather than reusing an existing one as above.
   context 'given one of my own *private* videos that I want to update' do
-    before { @tmp_video = $account.upload_video 'https://bit.ly/yt_test', title: old_title, privacy_status: old_privacy_status }
+    before { @tmp_video = $account.upload_video 'https://bit.ly/youhub_test', title: old_title, privacy_status: old_privacy_status }
     let(:id) { @tmp_video.id }
-    let!(:old_title) { "Yt Test Update publishAt Video #{rand}" }
+    let!(:old_title) { "Youhub Test Update publishAt Video #{rand}" }
     let!(:old_privacy_status) { 'private' }
-    after  { video.delete }
+    after { video.delete }
 
-    let!(:new_scheduled_at) { Yt::Timestamp.parse("#{rand(30) + 1} Jan 2020", Time.now) }
+    let!(:new_scheduled_at) { Youhub::Timestamp.parse("#{rand(1..30)} Jan 2020", Time.now) }
 
     context 'passing the parameter in underscore syntax' do
-      let(:attrs) { {publish_at: new_scheduled_at} }
+      let(:attrs) { { publish_at: new_scheduled_at } }
 
       specify 'only updates the timestamp to publish the video' do
-        expect(video.update attrs).to be true
+        expect(video.update(attrs)).to be true
         expect(video.privacy_status).to eq old_privacy_status
         expect(video.title).to eq old_title
         # NOTE: This is another irrational behavior of YouTube API. In short,
         # the response of Video#update *does not* include the publishAt value
         # even if it exists. You need to call Video#list again to get it.
-        video = Yt::Video.new id: id, auth: $account
+        video = Youhub::Video.new id: id, auth: $account
         expect(video.scheduled_at).to eq new_scheduled_at
         # Setting a private (scheduled) video to private has no effect:
-        expect(video.update privacy_status: 'private').to be true
-        video = Yt::Video.new id: id, auth: $account
+        expect(video.update(privacy_status: 'private')).to be true
+        video = Youhub::Video.new id: id, auth: $account
         expect(video.scheduled_at).to eq new_scheduled_at
         # Setting a private (scheduled) video to unlisted/public removes publishAt:
-        expect(video.update privacy_status: 'unlisted').to be true
-        video = Yt::Video.new id: id, auth: $account
+        expect(video.update(privacy_status: 'unlisted')).to be true
+        video = Youhub::Video.new id: id, auth: $account
         expect(video.scheduled_at).to be_nil
       end
     end
 
     context 'passing the parameter in camel-case syntax' do
-      let(:attrs) { {publishAt: new_scheduled_at} }
+      let(:attrs) { { publishAt: new_scheduled_at } }
 
       specify 'only updates the timestamp to publish the video' do
-        expect(video.update attrs).to be true
-        video = Yt::Video.new id: id, auth: $account
+        expect(video.update(attrs)).to be true
+        video = Youhub::Video.new id: id, auth: $account
         expect(video.scheduled_at).to eq new_scheduled_at
         expect(video.privacy_status).to eq old_privacy_status
         expect(video.title).to eq old_title
@@ -370,21 +370,21 @@ describe Yt::Video, :device_app do
     let(:update) { video.upload_thumbnail path_or_url }
 
     context 'given the path to a local JPG image file' do
-      let(:path_or_url) { File.expand_path '../thumbnail.jpg', __FILE__ }
+      let(:path_or_url) { File.expand_path 'thumbnail.jpg', __dir__ }
 
-      it { expect{update}.not_to raise_error }
+      it { expect { update }.not_to raise_error }
     end
 
     context 'given the path to a remote PNG image file' do
-      let(:path_or_url) { 'https://bit.ly/yt_thumbnail' }
+      let(:path_or_url) { 'https://bit.ly/youhub_thumbnail' }
 
-      it { expect{update}.not_to raise_error }
+      it { expect { update }.not_to raise_error }
     end
 
     context 'given an invalid URL' do
       let(:path_or_url) { 'this-is-not-a-url' }
 
-      it { expect{update}.to raise_error Yt::Errors::RequestError }
+      it { expect { update }.to raise_error Youhub::Errors::RequestError }
     end
   end
 

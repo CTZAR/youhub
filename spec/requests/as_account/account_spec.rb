@@ -1,34 +1,35 @@
-# encoding: UTF-8
-require 'spec_helper'
-require 'yt/models/account'
+# frozen_string_literal: true
 
-describe Yt::Account, :device_app do
+require 'spec_helper'
+require 'youhub/models/account'
+
+describe Youhub::Account, :device_app do
   describe 'can create playlists' do
-    let(:params) { {title: 'Test Yt playlist', privacy_status: 'unlisted'} }
+    let(:params) { { title: 'Test Youhub playlist', privacy_status: 'unlisted' } }
     before { @playlist = $account.create_playlist params }
-    it { expect(@playlist).to be_a Yt::Playlist }
+    it { expect(@playlist).to be_a Youhub::Playlist }
     after { @playlist.delete }
   end
 
-  it { expect($account.channel).to be_a Yt::Channel }
-  it { expect($account.playlists.first).to be_a Yt::Playlist }
-  it { expect($account.subscribed_channels.first).to be_a Yt::Channel }
-  it { expect($account.user_info).to be_a Yt::UserInfo }
+  it { expect($account.channel).to be_a Youhub::Channel }
+  it { expect($account.playlists.first).to be_a Youhub::Playlist }
+  it { expect($account.subscribed_channels.first).to be_a Youhub::Channel }
+  it { expect($account.user_info).to be_a Youhub::UserInfo }
 
   describe '.related_playlists' do
     let(:related_playlists) { $account.related_playlists }
 
     specify 'returns the list of associated playlist (Liked Videos, Uploads, ...)' do
-      expect(related_playlists.first).to be_a Yt::Playlist
+      expect(related_playlists.first).to be_a Youhub::Playlist
     end
 
     specify 'includes public related playlists (such as Liked Videos)' do
-      uploads = related_playlists.select{|p| p.title.starts_with? 'Uploads'}
+      uploads = related_playlists.select { |p| p.title.starts_with? 'Uploads' }
       expect(uploads).not_to be_empty
     end
 
     specify 'includes private playlists (such as History)' do
-      history = related_playlists.select{|p| p.title == 'History'}
+      history = related_playlists.select { |p| p.title == 'History' }
       expect(history).not_to be_empty
     end
   end
@@ -37,7 +38,7 @@ describe Yt::Account, :device_app do
     let(:video) { $account.videos.where(order: 'viewCount').first }
 
     specify 'returns the videos uploaded by the account with their tags and category ID' do
-      expect(video).to be_a Yt::Video
+      expect(video).to be_a Youhub::Video
       expect(video.tags).not_to be_empty
       expect(video.category_id).not_to be_nil
     end
@@ -46,7 +47,7 @@ describe Yt::Account, :device_app do
       let(:count) { $account.videos.where(q: query).count }
 
       context 'given a query string that matches any video owned by the account' do
-        let(:query) { ENV['YT_TEST_MATCHING_QUERY_STRING'] }
+        let(:query) { ENV['YOUHUB_TEST_MATCHING_QUERY_STRING'] }
         it { expect(count).to be > 0 }
       end
 
@@ -70,7 +71,7 @@ describe Yt::Account, :device_app do
       let(:video) { $account.videos.includes(:snippet).first }
 
       specify 'eager-loads the *full* snippet of each video' do
-        expect(video.instance_variable_defined? :@snippet).to be true
+        expect(video.instance_variable_defined?(:@snippet)).to be true
         expect(video.channel_title).to be
         expect(video.snippet).to be_complete
       end
@@ -80,8 +81,8 @@ describe Yt::Account, :device_app do
       let(:video) { $account.videos.includes(:statistics, :status).first }
 
       specify 'eager-loads the statistics and status of each video' do
-        expect(video.instance_variable_defined? :@statistics_set).to be true
-        expect(video.instance_variable_defined? :@status).to be true
+        expect(video.instance_variable_defined?(:@statistics_set)).to be true
+        expect(video.instance_variable_defined?(:@status)).to be true
       end
     end
 
@@ -89,7 +90,7 @@ describe Yt::Account, :device_app do
       let(:video) { $account.videos.includes(:content_details).first }
 
       specify 'eager-loads the statistics of each video' do
-        expect(video.instance_variable_defined? :@content_detail).to be true
+        expect(video.instance_variable_defined?(:@content_detail)).to be true
       end
     end
   end
@@ -98,7 +99,7 @@ describe Yt::Account, :device_app do
     let(:video_group) { $account.video_groups.first }
 
     specify 'returns the first video-group created by the account' do
-      expect(video_group).to be_a Yt::VideoGroup
+      expect(video_group).to be_a Youhub::VideoGroup
       expect(video_group.title).to be_a String
       expect(video_group.item_count).to be_an Integer
       expect(video_group.published_at).to be_a Time
@@ -110,20 +111,20 @@ describe Yt::Account, :device_app do
   end
 
   describe '.upload_video' do
-    let(:video_params) { {title: 'Test Yt upload', privacy_status: 'private', category_id: 17} }
+    let(:video_params) { { title: 'Test Youhub upload', privacy_status: 'private', category_id: 17 } }
     let(:video) { $account.upload_video path_or_url, video_params }
     after { video.delete }
 
     context 'given the path to a local video file' do
-      let(:path_or_url) { File.expand_path '../video.mp4', __FILE__ }
+      let(:path_or_url) { File.expand_path 'video.mp4', __dir__ }
 
-      it { expect(video).to be_a Yt::Video }
+      it { expect(video).to be_a Youhub::Video }
     end
 
     context 'given the URL of a remote video file' do
-      let(:path_or_url) { 'https://bit.ly/yt_test' }
+      let(:path_or_url) { 'https://bit.ly/youhub_test' }
 
-      it { expect(video).to be_a Yt::Video }
+      it { expect(video).to be_a Youhub::Video }
     end
   end
 

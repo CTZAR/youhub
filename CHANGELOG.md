@@ -8,19 +8,19 @@ For more information about changelogs, check
 
 ## 0.32.3 - 2019-03-15
 
-* [ENHANCEMENT] Add `Yt::URL` to get id, kind, and its resource (channel, video, playlist)
+* [ENHANCEMENT] Add `Youhub::URL` to get id, kind, and its resource (channel, video, playlist)
 * [BUGFIX] Fix `subscription.insert` by adding a parameter
-* [FEATURE] Add `file_name` attribute to `Yt::FileDetail` model
+* [FEATURE] Add `file_name` attribute to `Youhub::FileDetail` model
 
 ## 0.32.2 - 2018-05-25
 
-* Use YouTube Analytics API v2 instead of v1. See announcement of v1 deprecation
-https://developers.google.com/youtube/analytics/revision_history#april-26-2018
+* Use YouTube Analyouhubics API v2 instead of v1. See announcement of v1 deprecation
+https://developers.google.com/youtube/analyouhubics/revision_history#april-26-2018
 
 ## 0.32.1 - 2017-08-14
 
-* [FEATURE] Add `Yt::ContentOwner#bulk_report_jobs`
-* [FEATURE] Add `Yt::BulkReportJob#bulk_reports`
+* [FEATURE] Add `Youhub::ContentOwner#bulk_report_jobs`
+* [FEATURE] Add `Youhub::BulkReportJob#bulk_reports`
 
 ## 0.32.0 - 2017-07-05
 
@@ -37,15 +37,15 @@ If your code is expecting data from `reports` methods to always include historic
 ## 0.31.1 - 2017-06-03
 
 * [FEATURE] Add `by: :youtube_product` option for reports.
-* [FEATURE] Add `Yt::Collections::Reports::YOUTUBE_PRODUCTS` to list all YouTube products (KIDS, GAMING, etc) supported by YouTube Analytics API.
-* [FEATURE] Add more operating system dimensions to `Yt::Collections::Reports::OPERATING_SYSTEMS`.
+* [FEATURE] Add `Youhub::Collections::Reports::YOUTUBE_PRODUCTS` to list all YouTube products (KIDS, GAMING, etc) supported by YouTube Analyouhubics API.
+* [FEATURE] Add more operating system dimensions to `Youhub::Collections::Reports::OPERATING_SYSTEMS`.
 
 ## 0.31.0 - 2017-06-02
 
 **How to upgrade**
 
 If your code calls `.uniques` it should be removed because this metric has been
-no longer supported by YouTube API as of [October 31, 2016](https://developers.google.com/youtube/analytics/revision_history#september-27-2016).
+no longer supported by YouTube API as of [October 31, 2016](https://developers.google.com/youtube/analyouhubics/revision_history#september-27-2016).
 
 * [REMOVAL] Remove `#uniques` method for channels, videos and video groups.
 
@@ -57,13 +57,13 @@ no longer supported by YouTube API as of [October 31, 2016](https://developers.g
 
 **How to upgrade**
 
-If your code uses `Yt::Models::Configuration` then you must use
-`Yt::Configuration` instead.
+If your code uses `Youhub::Models::Configuration` then you must use
+`Youhub::Configuration` instead.
 
-Both `Yt::Configuration` and `Yt::Config` have been moved in a separate
-gem called `yt-support` that is required by default by the `yt` gem.
+Both `Youhub::Configuration` and `Youhub::Config` have been moved in a separate
+gem called `youhub-support` that is required by default by the `youhub` gem.
 
-* [REMOVAL] Remove `Yt::Models::Configuration` (renamed as `Yt::Configuration`)
+* [REMOVAL] Remove `Youhub::Models::Configuration` (renamed as `Youhub::Configuration`)
 
 ## 0.29.1 - 2017-02-26
 
@@ -73,31 +73,31 @@ gem called `yt-support` that is required by default by the `yt` gem.
 
 **How to upgrade**
 
-If your code uses `Yt::URL` then you must include the `yt-url` gem, since
-`Yt::URL` has been extracted into a separate repository.
-Please read the documentation of `Yt::URL` and notice that the `subscription`
+If your code uses `Youhub::URL` then you must include the `youhub-url` gem, since
+`Youhub::URL` has been extracted into a separate repository.
+Please read the documentation of `Youhub::URL` and notice that the `subscription`
 pattern has been dropped, so URLs such as the following will not be recognized
 anymore: `subscription_center?add_user=...`, `subscribe_widget?p=...`.
 
 Note that this also removes the option of initializing a resource by URL.
-You can achieve the same result with the `yt-url` gem, as detailed in its
+You can achieve the same result with the `youhub-url` gem, as detailed in its
 documentation.
 
-Finally note that this also remove the class `Yt::Description`. This class
+Finally note that this also remove the class `Youhub::Description`. This class
 was private API, so this change should not affect developers.
 
 * [REMOVAL] Remove the option to initialize resources by URL.
-* [REMOVAL] Remove `Yt::Resource.username`
-* [REMOVAL] Remove `Yt::URL` (extracted into separate gem)
-* [REMOVAL] Remove `Yt::Description` (now simply a String).
+* [REMOVAL] Remove `Youhub::Resource.username`
+* [REMOVAL] Remove `Youhub::URL` (extracted into separate gem)
+* [REMOVAL] Remove `Youhub::Description` (now simply a String).
 
 ## 0.28.5 - 2017-01-18
 
-* [BUGFIX] Don't crash when Yt::VideoGroup is initialized with a group of playlists.
+* [BUGFIX] Don't crash when Youhub::VideoGroup is initialized with a group of playlists.
 
 ## 0.28.4 - 2017-01-18
 
-* [BUGFIX] Don't crash when Yt::VideoGroup is initialized with a group of playlists.
+* [BUGFIX] Don't crash when Youhub::VideoGroup is initialized with a group of playlists.
 
 ## 0.28.3 - 2017-01-09
 
@@ -123,7 +123,7 @@ was private API, so this change should not affect developers.
 If your code calls `.earnings` and `.impressions`
 then you must replace that code  with `.estimated_revenue` and
 `.ad_impressions` since those metrics will no longer be supported by
-YouTube API as of [November 4, 2016](https://developers.google.com/youtube/analytics/revision_history#august-10-2016).
+YouTube API as of [November 4, 2016](https://developers.google.com/youtube/analyouhubics/revision_history#august-10-2016).
 
 * [REMOVAL] Remove `#earnings` method for channels, playlists, videos and video groups
 * [REMOVAL] Remove `#impressions` method for channels, videos and video groups
@@ -170,7 +170,7 @@ equivalent `views(since: 3.days.ago, until: 3.days.ago)`.
 ## 0.26.3 - 2016-10-07
 
 * [FEATURE] Add `by: :subscribed_status` option for reports, to return views (from a `content_owner.video`) by subscribed status.
-* [FEATURE] Add `Yt::Collections::Reports::SUBSCRIBED_STATUSES` to list all subscribed statuses supported by YouTube Analytics API.
+* [FEATURE] Add `Youhub::Collections::Reports::SUBSCRIBED_STATUSES` to list all subscribed statuses supported by YouTube Analyouhubics API.
 
 ## 0.26.2 - 2016-10-05
 
@@ -198,13 +198,13 @@ supported by YouTube API.
 
 ## 0.25.40 - 2016-09-19
 
-* [IMPROVEMENT] Add `Yt::Claim#data` to access the policy of a claim
+* [IMPROVEMENT] Add `Youhub::Claim#data` to access the policy of a claim
 
 ## 0.25.39 - 2016-06-15
 
 * [FEATURE] Add `by: :operating_system` option for reports, to return views (from a `content_owner.video`) by operating system.
-* [FEATURE] Add `Yt::Collections::Reports::DEVICE_TYPES` to list all device types supported by YouTube Analytics API.
-* [FEATURE] Add `Yt::Collections::Reports::OPERATING_SYSTEMS` to list all operating systems supported by YouTube Analytics API.
+* [FEATURE] Add `Youhub::Collections::Reports::DEVICE_TYPES` to list all device types supported by YouTube Analyouhubics API.
+* [FEATURE] Add `Youhub::Collections::Reports::OPERATING_SYSTEMS` to list all operating systems supported by YouTube Analyouhubics API.
 
 ## 0.25.38 - 2016-06-13
 
@@ -217,7 +217,7 @@ supported by YouTube API.
 ## 0.25.36  - 2016-05-10
 
 * [BUGFIX] Raise RequestError when authentication code is "invalid" or "already redeemed"
-* [FEATURE] Make two methods `#explanation` and `#response_body` public for `Yt::Errors::RequestError`
+* [FEATURE] Make two methods `#explanation` and `#response_body` public for `Youhub::Errors::RequestError`
 
 ## 0.25.35  - 2016-04-27
 
@@ -246,7 +246,7 @@ supported by YouTube API.
 
 ## 0.25.29 - 2016-04-07
 
-* [BUGFIX] Previously, Yt was throttling queries for `quotaExceeded` responses from YouTube. However, matching `quotaExceeded` was too specific and would not have caught other limit exceeding responses from YouTube. This change will allow Yt to throttle other responses that contains `Exceeded` or `exceeded`.
+* [BUGFIX] Previously, Youhub was throttling queries for `quotaExceeded` responses from YouTube. However, matching `quotaExceeded` was too specific and would not have caught other limit exceeding responses from YouTube. This change will allow Youhub to throttle other responses that contains `Exceeded` or `exceeded`.
 
 ## 0.25.28 - 2016-04-05
 
@@ -254,16 +254,16 @@ supported by YouTube API.
 
 ## 0.25.27 - 2016-03-28
 
-* [FEATURE] Add `comment_threads` association to Yt::Video.
-* [FEATURE] Add `top_level_comment` and delegate its attributes (`text_display`, `author_display_name`, `like_count`, `updated_at`) to Yt::CommentThread.
+* [FEATURE] Add `comment_threads` association to Youhub::Video.
+* [FEATURE] Add `top_level_comment` and delegate its attributes (`text_display`, `author_display_name`, `like_count`, `updated_at`) to Youhub::CommentThread.
 
 ## 0.25.26 - 2016-03-24
 
-* [FEATURE] Add Yt::Comment resource.
+* [FEATURE] Add Youhub::Comment resource.
 
 ## 0.25.25 - 2016-03-24
 
-* [FEATURE] Add Yt::CommentThread resource.
+* [FEATURE] Add Youhub::CommentThread resource.
 
 ## 0.25.24 - 2016-03-02
 
@@ -288,28 +288,28 @@ supported by YouTube API.
 
 ## 0.25.19 - 2016-01-15
 
-* [FEATURE] Add `:group_items` to Yt::VideoGroup (list items of a group)
-* [FEATURE] Add `:includes(:video)` to `Yt::VideoGroup#group_items` (eagerly loads all the videos)
+* [FEATURE] Add `:group_items` to Youhub::VideoGroup (list items of a group)
+* [FEATURE] Add `:includes(:video)` to `Youhub::VideoGroup#group_items` (eagerly loads all the videos)
 
 ## 0.25.18 - 2016-01-08
 
-* [FEATURE] Add Yt::COUNTRIES and Yt::US_STATES
-* [FEATURE] Add YouTube Analytics Video Groups
-* [FEATURE] Add `:video_groups` to Yt::Account (list video-groups created by an account)
-* [FEATURE] Add `:video_groups` to Yt::ContentOwner (list video-groups on behalf of a content owner)
+* [FEATURE] Add Youhub::COUNTRIES and Youhub::US_STATES
+* [FEATURE] Add YouTube Analyouhubics Video Groups
+* [FEATURE] Add `:video_groups` to Youhub::Account (list video-groups created by an account)
+* [FEATURE] Add `:video_groups` to Youhub::ContentOwner (list video-groups on behalf of a content owner)
 * [FEATURE] Add reports by video-group
 
 ## 0.25.17 - 2016-01-05
 
-* [FEATURE] Add `:videos` to Yt::ContentOwner to list videos in network with a content owner
+* [FEATURE] Add `:videos` to Youhub::ContentOwner to list videos in network with a content owner
 
 ## 0.25.16 - 2015-12-19
 
-* [FEATURE] Add `access_token_was_refreshed` to Yt::Account
+* [FEATURE] Add `access_token_was_refreshed` to Youhub::Account
 
 ## 0.25.15 - 2015-12-17
 
-* [FEATURE] Add `revoke_access` to Yt::Account
+* [FEATURE] Add `revoke_access` to Youhub::Account
 
 ## 0.25.14 - 2015-12-16
 
@@ -367,7 +367,7 @@ supported by YouTube API.
 
 ## 0.25.1 - 2015-07-06
 
-* [ENHANCEMENT] `Yt::Video.new` accepts embedded video url.
+* [ENHANCEMENT] `Youhub::Video.new` accepts embedded video url.
 
 ## 0.25.0 - 2015-06-29
 
@@ -509,7 +509,7 @@ If your code doesn’t use any of the following constants that were public but
 undocumented, then you are good to go.
 
 If it does, then you should redefine those constants in your own app, since
-it’s not Yt’s goal to validate the values posted to YouTube API.
+it’s not Youhub’s goal to validate the values posted to YouTube API.
 
 * [REMOVAL] Remove `Asset#STATUSES` (was `%q(active inactive pending)`).
 * [REMOVAL] Remove `Claim#STATUSES` (was `%q(active appealed disputed inactive pending potential takedown unknown)`).
@@ -523,7 +523,7 @@ it’s not Yt’s goal to validate the values posted to YouTube API.
 **How to upgrade**
 
 If your code never calls `partnered_channels.includes(:viewer_percentages)` on
-a Yt::ContentOwner, then you are good to go.
+a Youhub::ContentOwner, then you are good to go.
 
 If it does, then be aware that viewer percentage is not eager-loaded anymore,
 so the call above is equivalent to `partenered_channels`. The reason is that
@@ -564,7 +564,7 @@ If it does, then call the same methods on `video`, rather than `video.status`.
 For instance, replace `video.status.deleted?` with `video.deleted?`.
 
 * [ENHANCEMENT] Don’t over-delegate methods of Video.
-* [ENHANCEMENT] Complete documentation of Yt::Video.
+* [ENHANCEMENT] Complete documentation of Youhub::Video.
 
 ## 0.16.0 - 2015-04-27
 
@@ -580,13 +580,13 @@ video is **being uploaded**.
 
 ## 0.15.3 - 2015-04-27
 
-* [FEATURE] New `file_size`, `file_type`, `container` methods for Yt::Video.
+* [FEATURE] New `file_size`, `file_type`, `container` methods for Youhub::Video.
 * [BUGFIX] Retrieve `category_id` also for videos obtained through a search.
 * [FEATURE] Add .includes(:category) to .videos in order to eager-load category title and ID of a collection of videos
 
 ## 0.15.2 - 2015-04-27
 
-* [FEATURE] New `embed_html` method for Yt::Video.
+* [FEATURE] New `embed_html` method for Youhub::Video.
 
 ## 0.15.1 - 2015-04-19
 
@@ -623,7 +623,7 @@ deprecated: you should use `viewer_percentage` instead.
 
 ## 0.14.5 - 2015-04-15
 
-* [BUGFIX] Raise `Yt::Errors::RequestError` when passing an invalid path or URL to `upload_thumbnail`
+* [BUGFIX] Raise `Youhub::Errors::RequestError` when passing an invalid path or URL to `upload_thumbnail`
 
 ## 0.14.4 - 2015-04-14
 
@@ -633,7 +633,7 @@ deprecated: you should use `viewer_percentage` instead.
 
 ## 0.14.3 - 2015-04-09
 
-* [BUGFIX] Don't let request errors crash Yt in Ruby 1.9.3.
+* [BUGFIX] Don't let request errors crash Youhub in Ruby 1.9.3.
 
 ## 0.14.2 - 2015-04-08
 
@@ -742,21 +742,21 @@ object (to delete subscriptions by id), then you are good to go.
 If it does, then be aware that trying to delete an unknown subscription will
 now raise a RequestError, and will not accept `ignore_errors` as an option:
 
-    account = Yt::Account.new access_token: 'ya29...'
-    subscription = Yt::Subscription.new id: '--unknown-id--', auth: account
+    account = Youhub::Account.new access_token: 'ya29...'
+    subscription = Youhub::Subscription.new id: '--unknown-id--', auth: account
     # old behavior
     subscription.delete ignore_errors: true # => false
     # new behavior
-    subscription.delete # => raises Yt::Errors::RequestError "subscriptionNotFound"
+    subscription.delete # => raises Youhub::Errors::RequestError "subscriptionNotFound"
 
 Note that the `unsubscribe` and `unsubscribe!` methods of `Channel` have not
 changed, so you can still try to unsubscribe from a channel and not raise an
 error by using the `unsubscribe` method:
 
-    account = Yt::Account.new access_token: 'ya29...'
-    channel = Yt::Channel.new id: 'UC-CHANNEL-ID', auth: account
+    account = Youhub::Account.new access_token: 'ya29...'
+    channel = Youhub::Channel.new id: 'UC-CHANNEL-ID', auth: account
     channel.unsubscribe # => returns falsey if you were not subscribed
-    channel.unsubscribe! # => raises Yt::Errors::RequestError if you were not subscribed
+    channel.unsubscribe! # => raises Youhub::Errors::RequestError if you were not subscribed
 
 * [ENHANCEMENT] Replace `has_many :subscriptions` with `has_one :subscription` in Channel
 * [FEATURE] Add `subscribed_channels` to Channel (list which channels the channel is subscribed to)
@@ -793,26 +793,26 @@ error by using the `unsubscribe` method:
 
 For instance, to search for the most viewed video on the whole YouTube, run:
 
-    videos = Yt::Collections::Videos.new
+    videos = Youhub::Collections::Videos.new
     videos.where(order: 'viewCount').first.title #=>  "PSY - GANGNAM STYLE"
 
 ## 0.11.0 - 2014-08-17
 
 **How to upgrade**
 
-When a request to YouTube fails, Yt used to print out a verbose error message,
+When a request to YouTube fails, Youhub used to print out a verbose error message,
 including the response body and the request that caused the error (in curl
 format). This output could include sensitive data (such as the authentication
-token). For security reasons, Yt will not print it out anymore by default.
+token). For security reasons, Youhub will not print it out anymore by default.
 
 If this is acceptable, then you are good to go.
-If you want the old behavior, set the `log_level` of Yt to `:debug`:
+If you want the old behavior, set the `log_level` of Youhub to `:debug`:
 
-    Yt.configure do |config|
+    Youhub.configure do |config|
       config.log_level = :debug
     end
 
-* [ENHANCEMENT] Add `log_level` to Yt.configuration
+* [ENHANCEMENT] Add `log_level` to Youhub.configuration
 
 ## 0.10.5 - 2014-08-17
 
@@ -833,7 +833,7 @@ If you want the old behavior, set the `log_level` of Yt to `:debug`:
 
 ## 0.10.1 - 2014-08-11
 
-* [BUGFIX] Make Yt work on Ruby 1.9.3 / ActiveSupport 3.0 again (was broken by 0.10.0)
+* [BUGFIX] Make Youhub work on Ruby 1.9.3 / ActiveSupport 3.0 again (was broken by 0.10.0)
 
 ## 0.10.0 - 2014-08-11
 
@@ -850,7 +850,7 @@ exactly how many items are returned.
 If this is acceptable, then you are good to go.
 If you want the old behavior, replace `size` with `count`:
 
-    account = Yt::Account.new access_token: 'ya29...'
+    account = Youhub::Account.new access_token: 'ya29...'
     # old behavior
     account.videos.size # => retrieved *all* the pages of the account’s videos
     # new behavior
@@ -918,12 +918,12 @@ For instance, either of the following syntaxes can now be used:
 
 **How to upgrade**
 
-If your code never declares instances of `Yt::Rating`, or never calls the
+If your code never declares instances of `Youhub::Rating`, or never calls the
 `update` method on them, then you are good to go.
 
 If it does, then *simply replace `update` with `set`*:
 
-    rating = Yt::Rating.new
+    rating = Youhub::Rating.new
     # old syntax
     rating.update :like
     # new syntax
@@ -964,7 +964,7 @@ information: `public?`, `uploaded?`, `rejected?`, `failed?`, `processed?`,
 
 **How to upgrade**
 
-If your code never declares instances of `Yt::Channel`, or never calls the
+If your code never declares instances of `Youhub::Channel`, or never calls the
 `subscribe` method on them, then you are good to go.
 
 If it does, then be aware that `subscribe` will not raise an error anymore if
@@ -974,7 +974,7 @@ a YouTube user tries to subscribe to her/his own YouTube channel. Instead,
 If this is acceptable, then you are good to go.
 If you want the old behavior, replace `subscribe` with `subscribe!`:
 
-    account = Yt::Account.new access_token: 'ya29...'
+    account = Youhub::Account.new access_token: 'ya29...'
     channel = account.channel
     # old behavior
     channel.subscribe # => raised an error
@@ -1015,13 +1015,13 @@ If you want the old behavior, replace `subscribe` with `subscribe!`:
 
 ## 0.5 - 2014/05/16
 
-* More complete custom exception Yt::Error, with code, body and curl
+* More complete custom exception Youhub::Error, with code, body and curl
 * Replace `:ignore_not_found` and `:ignore_duplicates` with `:ignore_errors`
-* Allow resources to be initialized with a url, such as Yt::Resource.new url: 'youtube.com/fullscreen'
+* Allow resources to be initialized with a url, such as Youhub::Resource.new url: 'youtube.com/fullscreen'
 * Add `has_one :id` to resources, to retrieve the ID of resources initialized by URL
 * Raise an error if some `has_one` associations are not found (id, snippet, details set, user info)
 * Don't check for the right :scope if Account is initialized with credentials
-* Move models in Yt::Models but still auto-include them in the main namespace
+* Move models in Youhub::Models but still auto-include them in the main namespace
 * New Authentication model to separate `access_token` and `refresh_token` from Account
 * New types of Errors that render more verbose errors and the failing request in cURL syntax
 * Separate Error class for 500 error, so they can be easily found in app logs
@@ -1044,7 +1044,7 @@ If you want the old behavior, replace `subscribe` with `subscribe!`:
 * Fix parsing annotation and timestamps longer than 1 hour
 * Fix delegating tags from resources to snippets
 * Two options to add videos to a playlist: fail or not if a video is missing or its account terminated
-* Allow to configure Yt credentials through environment variables
+* Allow to configure Youhub credentials through environment variables
 * When updating a playlist, only changes the specified attributes
 
 ## 0.3.0 - 2014/04/16

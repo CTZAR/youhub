@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/collections/references'
-require 'yt/models/content_owner'
+# frozen_string_literal: true
 
-describe Yt::Collections::References do
-  subject(:collection) { Yt::Collections::References.new parent: content_owner }
-  let(:content_owner) { Yt::ContentOwner.new id: 'any-id' }
-  let(:page) { {items: [], token: 'any-token'} }
-  let(:query) { {id: 'reference-id'} }
+require 'spec_helper'
+require 'youhub/collections/references'
+require 'youhub/models/content_owner'
+
+describe Youhub::Collections::References do
+  subject(:collection) { Youhub::Collections::References.new parent: content_owner }
+  let(:content_owner) { Youhub::ContentOwner.new id: 'any-id' }
+  let(:page) { { items: [], token: 'any-token' } }
+  let(:query) { { id: 'reference-id' } }
 
   describe '#count' do
     context 'called once with .where(query) and once without' do

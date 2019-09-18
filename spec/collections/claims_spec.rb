@@ -1,12 +1,14 @@
-require 'spec_helper'
-require 'yt/collections/claims'
-require 'yt/models/content_owner'
+# frozen_string_literal: true
 
-describe Yt::Collections::Claims do
-  subject(:collection) { Yt::Collections::Claims.new parent: content_owner }
-  let(:content_owner) { Yt::ContentOwner.new owner_name: 'any-name' }
-  let(:page) { {items: [], token: 'any-token'} }
-  let(:query) { {q: 'search string'} }
+require 'spec_helper'
+require 'youhub/collections/claims'
+require 'youhub/models/content_owner'
+
+describe Youhub::Collections::Claims do
+  subject(:collection) { Youhub::Collections::Claims.new parent: content_owner }
+  let(:content_owner) { Youhub::ContentOwner.new owner_name: 'any-name' }
+  let(:page) { { items: [], token: 'any-token' } }
+  let(:query) { { q: 'search string' } }
 
   describe '#count' do
     context 'called once with .where(query) and once without' do

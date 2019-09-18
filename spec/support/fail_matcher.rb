@@ -1,12 +1,12 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :fail do
   supports_block_expectations
   match do |block|
-    begin
-      block.call
-      false
-    rescue Yt::Error => error
-      @reason ? error.reasons.include?(@reason) : true
-    end
+    block.call
+    false
+  rescue Youhub::Error => e
+    @reason ? e.reasons.include?(@reason) : true
   end
 
   chain :with do |reason|

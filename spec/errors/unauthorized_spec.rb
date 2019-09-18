@@ -1,10 +1,12 @@
-require 'spec_helper'
-require 'yt/errors/unauthorized'
+# frozen_string_literal: true
 
-describe Yt::Errors::Unauthorized do
-  let(:msg) { %r{^A request to YouTube API was sent without a valid authentication} }
+require 'spec_helper'
+require 'youhub/errors/unauthorized'
+
+describe Youhub::Errors::Unauthorized do
+  let(:msg) { /^A request to YouTube API was sent without a valid authentication/ }
 
   describe '#exception' do
-    it { expect{raise Yt::Errors::Unauthorized}.to raise_error msg }
+    it { expect { raise Youhub::Errors::Unauthorized }.to raise_error msg }
   end
 end
