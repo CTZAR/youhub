@@ -91,10 +91,10 @@ module Youhub
     # @return [String] the +cURL+ version of the request.
     def as_curl
       'curl'.tap do |curl|
-        curl << " -X #{http_request.method}"
-        http_request.each_header { |k, v| curl << %( -H "#{k}: #{v}") }
-        curl << %( -d '#{http_request.body}') if http_request.body
-        curl << %( "#{uri}")
+        curl += " -X #{http_request.method}"
+        http_request.each_header { |k, v| curl += %( -H "#{k}: #{v}") }
+        curl += %( -d '#{http_request.body}') if http_request.body
+        curl += %( "#{uri}")
       end
     end
 
